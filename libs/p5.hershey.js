@@ -55,11 +55,16 @@ P5.hershey={
     P5.translate(-xmin,0);
     P5.beginShape();
     
+    const lineSegments = [];
+    let lastPoint = null;
     for (var i = 0; i < content.length; i+=2){
       var digit = content.slice(i,i+2);
       if (digit == " R"){
         P5.endShape();
         P5.beginShape();
+        drawLineSegments(lineSegments);
+        lineSegments.length = 0;
+        lastPoint = null;
       }else{
         var x = digit[0].charCodeAt(0)-ordR;
         var y = digit[1].charCodeAt(0)-ordR;
@@ -71,12 +76,35 @@ P5.hershey={
           x += args.noise.x(x,y);
           y += args.noise.y(x,y);
         }
-        P5.vertex(x,y);
+        // P5.vertex(x, y);
+        if (lastPoint) {
+          lineSegments.push([
+            lastPoint[0],
+            lastPoint[1],
+            x,
+            y
+          ]);
+        }
+        lastPoint = [x,y];
       }
     }
     P5.endShape();
     P5.pop();
-    return xmax-xmin;
+    return xmax - xmin;
+    
+    function drawLineSegments(lineSegments) {
+      for (let i = 0; i < lineSegments.length; i++) {
+        const [x1, y1, x2, y2] = lineSegments[i];
+        P5.line(x1, y1, x2, y2);
+        // draw offset lines
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        const offset = 20;
+        P5.push();
+        P5.translate(Math.cos(angle) * offset, Math.sin(angle) * offset);
+        P5.line(x1, y1, x2, y2);
+        P5.pop();
+      }
+    }
   },
   putText : function (s, args){
     if (args == undefined){args = {}}
