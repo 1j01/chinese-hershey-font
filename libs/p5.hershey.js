@@ -97,10 +97,12 @@ P5.hershey={
         const [x1, y1, x2, y2] = lineSegments[i];
         P5.line(x1, y1, x2, y2);
         // draw offset lines
-        const angle = Math.atan2(y2 - y1, x2 - x1);
-        const offset = 20;
+        const angle = Math.atan2(y2 - y1, x2 - x1) + Math.PI / 2;
+        const offset = 3;//Math.sin(performance.now() / 1000) * 10;
         P5.push();
         P5.translate(Math.cos(angle) * offset, Math.sin(angle) * offset);
+        P5.line(x1, y1, x2, y2);
+        P5.translate(Math.cos(angle) * offset * -2, Math.sin(angle) * offset * -2);
         P5.line(x1, y1, x2, y2);
         P5.pop();
       }
